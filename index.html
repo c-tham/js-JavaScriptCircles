@@ -9,6 +9,27 @@
 	<svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
 
 	<script>
+
+	// add mouse touch begin
+	var mousedown_time;
+	var time_pressed = 10;
+	var rad = 10;
+
+	function getTime(){
+		var date = new Date();
+		return date.getTime();
+	}
+
+	document.onmousedown = function(e){
+		mousedown_time = getTime();
+	}
+	document.onmouseup = function(e){
+		time_pressed = getTime() - mousedown_time;
+		// console.log('You held your mouse down for', time_pressed, 'miliseconds.');
+	}
+	//technically we don't even need the mousedown variable but we're leaving it there for now..
+	// add mouse touch end
+
 	function Circle(cx, cy, html_id)
 	{
 		var html_id = html_id;
@@ -26,15 +47,20 @@
 				y: randomNumberBetween(-3,3)
 			}
 
+			// add code to determine the size of the balls
+			if (time_pressed != 10) {
+				rad = Math.floor(time_pressed * 0.1);
+			}
+
 			//create a circle 
 			var circle = makeSVG('circle', 
 				{ 	cx: this.info.cx,
 				  	cy: this.info.cy,
-				  	r:  10,
+				  	r:  rad, // Original is r:10
 				  	id: html_id,
 				  	style: "fill: black"
 				});
-
+			
 			document.getElementById('svg').appendChild(circle);
 		}
 
@@ -42,13 +68,13 @@
 			var el = document.getElementById(html_id);
 
 			//see if the circle is going outside the browser. if it is, reverse the velocity
-			// updated - width > 91% or < 10px 
-			if( this.info.cx > (document.body.clientWidth*.91) || this.info.cx < 10)
+			// updated - width  
+			if( this.info.cx > (document.body.clientWidth-(rad*2)) || this.info.cx < rad)
 			{
 				this.info.velocity.x = this.info.velocity.x * -1;
 			}
-			// updated - width > 93.5% or < 10px 
-			if( this.info.cy > (document.body.clientHeight*.935) || this.info.cy < 10)
+			// updated - width 
+			if( this.info.cy > (document.body.clientHeight-rad) || this.info.cy < rad)
 			{
 				this.info.velocity.y = this.info.velocity.y * -1;
 			}
